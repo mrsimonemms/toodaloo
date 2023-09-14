@@ -1,0 +1,49 @@
+tasks:
+  - name: Setup
+    command: |
+      curl -sfL gpm.simonemms.com | bash
+
+      gpm install pre-commit
+
+      pip install cookieninja cruft
+
+      go install github.com/spf13/cobra-cli@latest
+
+      gp sync-done setup
+
+      pre-commit install --install-hooks -t pre-commit -t commit-msg
+
+      gp sync-done pre-commit
+
+      exit 0
+  - init: |
+      if [ -f "go.mod" ]; then
+        go install ./...
+      fi
+    command: |
+      gp sync-await setup
+
+      # Copy .cobra.yaml to $HOME
+      ln -s $PWD/.cobra.yaml $HOME/.cobra.yaml
+
+      export GIT_REPO="${GITPOD_WORKSPACE_CONTEXT_URL/https:\/\//}"
+      export PROJECT_NAME="${GIT_REPO##*/}"
+
+      if [ ! -f "go.mod" ]; then
+        echo "Creating Go module"
+        go mod init "$GIT_REPO"
+      fi
+      if [ ! -f "main.go" ]; then
+        echo "Create Cobra project"
+        cobra-cli init
+        go mod tidy
+      fi
+
+vscode:
+  extensions:
+    - donjayamanne.git-extension-pack
+    - EditorConfig.EditorConfig
+    - waderyan.gitblame
+    - GitHub.vscode-github-actions
+    - ms-vscode.makefile-tools
+    - golang.go

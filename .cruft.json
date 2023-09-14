@@ -1,0 +1,19 @@
+{
+  "template": "https://github.com/mrsimonemms/new",
+  "commit": "50d8296eae795e12183145e6a37e293143e0ab5a",
+  "checkout": "main",
+  "context": {
+    "cookiecutter": {
+      "project_name": "toodaloo",
+      "description": "Say goodbye to your todos",
+      "author": "Simon Emms <simon@simonemms.com>",
+      "repo": "github.com/mrsimonemms/toodaloo",
+      "use_viper": true,
+      "_template": "https://github.com/mrsimonemms/new"
+    }
+  },
+  "directory": "golang-cobra",
+  "skip": [
+    ".git"
+  ]
+}
