@@ -43,3 +43,29 @@ func Init(directory, filename string) error {
 
 	return nil
 }
+
+func NewConfigFromFile(directory, filename string) (*Config, error) {
+	file := filepath.Join(directory, filename)
+	l := logger.Log().WithField("filename", file)
+
+	l.Infof("Loading configuration from file")
+
+	bytes, err := os.ReadFile(filename)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, err
+	}
+
+	if os.IsNotExist(err) {
+		l.Info("Config file does not exist, using the default config")
+
+		return &defaultConfig, nil
+	}
+
+	// Start from the default config
+	config := defaultConfig
+	if err := yaml.Unmarshal(bytes, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
