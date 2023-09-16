@@ -13,23 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package cmd
 
-package config
+import (
+	"fmt"
 
-type Config struct {
-	Glob        string   `json:"glob"`
-	IgnorePaths []string `json:"ignore_paths,omitempty"`
-	Output      string   `json:"output"`
-	Tags        []string `json:"tags"`
+	"github.com/mrsimonemms/golang-helpers/logger"
+	"github.com/mrsimonemms/toodaloo/pkg/config"
+	"github.com/spf13/cobra"
+)
+
+// scanCmd represents the scan command
+var scanCmd = &cobra.Command{
+	Use:   "scan",
+	Short: "Scan a project",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		cfg, err := config.NewConfigFromFile(rootCfg.WorkingDirectory, rootCfg.CfgFile)
+		if err != nil {
+			logger.Log().WithError(err).Error("Error reading config")
+			return err
+		}
+
+		fmt.Println(cfg)
+
+		return nil
+	},
 }
 
-var defaultConfig = Config{
-	Glob:        "**/*",
-	IgnorePaths: []string{},
-	Output:      "toodaloo.yaml",
-	Tags: []string{
-		"fixme",
-		"todo",
-		"@todo",
-	},
+func init() {
+	rootCmd.AddCommand(scanCmd)
 }
