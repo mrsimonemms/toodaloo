@@ -1,7 +1,7 @@
 {
   "template": "https://github.com/mrsimonemms/new",
-  "commit": "50d8296eae795e12183145e6a37e293143e0ab5a",
-  "checkout": "main",
+  "commit": "d55ede3cb01fa4f608a66235fd89d4757cf19259",
+  "checkout": null,
   "context": {
     "cookiecutter": {
       "project_name": "toodaloo",

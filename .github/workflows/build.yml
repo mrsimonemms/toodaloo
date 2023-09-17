@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   packages: write
+  pull-requests: read
 jobs:
   commitlint:
     runs-on: ubuntu-latest
