@@ -16,10 +16,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/mrsimonemms/golang-helpers/logger"
 	"github.com/mrsimonemms/toodaloo/pkg/config"
+	"github.com/mrsimonemms/toodaloo/pkg/scanner"
 	"github.com/spf13/cobra"
 )
 
@@ -34,9 +33,13 @@ var scanCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Println(cfg)
+		s, err := scanner.New(rootCfg.WorkingDirectory, cfg)
+		if err != nil {
+			logger.Log().WithError(err).Error("Unable to load scanner")
+			return err
+		}
 
-		return nil
+		return s.Exec()
 	},
 }
 
