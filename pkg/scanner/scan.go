@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package config
+package scanner
 
-type Config struct {
-	Glob        string   `json:"glob"`
-	IgnorePaths []string `json:"ignore_paths,omitempty"`
-	Output      string   `json:"output"`
-	Tags        []string `json:"tags"`
-}
+import (
+	"github.com/mrsimonemms/toodaloo/pkg/config"
+)
 
-var defaultConfig = Config{
-	Glob: "**/*",
-	IgnorePaths: []string{
-		".git",
-		".git/**/*",
-	},
-	Output: "toodaloo.yaml",
-	Tags: []string{
-		"fixme",
-		"todo",
-		"@todo",
-	},
+func New(workingDirectory string, cfg *config.Config) (*Scan, error) {
+	return &Scan{
+		config:           cfg,
+		workingDirectory: workingDirectory,
+	}, nil
 }
