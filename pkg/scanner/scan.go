@@ -17,7 +17,15 @@
 package scanner
 
 import (
+	"bufio"
+	"fmt"
+	"os"
+	"regexp"
+	"strings"
+
 	"github.com/mrsimonemms/toodaloo/pkg/config"
+	"github.com/sirupsen/logrus"
+	"sigs.k8s.io/yaml"
 )
 
 func New(workingDirectory string, cfg *config.Config) (*Scan, error) {
@@ -25,4 +33,64 @@ func New(workingDirectory string, cfg *config.Config) (*Scan, error) {
 		config:           cfg,
 		workingDirectory: workingDirectory,
 	}, nil
+}
+
+func scanForTodos(l *logrus.Entry, filename string, tags []string) ([]ScanResult, error) {
+	l.Debug("Scan starting")
+
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		l.Debug("Closing file")
+		err = f.Close()
+	}()
+
+	res := make([]ScanResult, 0)
+
+	scanner := bufio.NewScanner(f)
+	line := 0
+	for scanner.Scan() {
+		for _, tag := range tags {
+			regex := fmt.Sprintf("(^|\\s)%s(\\((.*)\\))?(:?(.*))?", regexp.QuoteMeta(tag))
+
+			l = l.WithField("line", line)
+
+			l.WithField("regex", regex).Debug("Searching in file")
+
+			r, err := regexp.Compile(regex)
+			if err != nil {
+				return nil, err
+			}
+
+			matches := r.FindStringSubmatch(scanner.Text())
+			l.WithField("matches", matches).Debug("Found matches")
+			if len(matches) == 0 {
+				continue
+			}
+
+			author := strings.TrimSpace(matches[3])
+			msg := strings.TrimSpace(matches[5])
+
+			res = append(res, ScanResult{
+				File:       filename,
+				LineNumber: line,
+				Author:     author,
+				Msg:        msg,
+			})
+		}
+
+		line++
+	}
+
+	e, err := yaml.Marshal(res)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s\n", e)
+
+	l.Debug("Scan ending")
+	return res, err
 }
