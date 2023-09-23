@@ -25,7 +25,6 @@ import (
 
 	"github.com/mrsimonemms/toodaloo/pkg/config"
 	"github.com/sirupsen/logrus"
-	"sigs.k8s.io/yaml"
 )
 
 func New(workingDirectory string, cfg *config.Config) (*Scan, error) {
@@ -84,12 +83,6 @@ func scanForTodos(l *logrus.Entry, filename string, tags []string) ([]ScanResult
 
 		line++
 	}
-
-	e, err := yaml.Marshal(res)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("%s\n", e)
 
 	l.Debug("Scan ending")
 	return res, err

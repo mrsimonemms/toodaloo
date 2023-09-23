@@ -17,7 +17,6 @@
 package scanner
 
 import (
-	"fmt"
 	"os"
 	"path"
 
@@ -81,13 +80,12 @@ func (s *Scan) getListOfFiles() ([]string, error) {
 	return fileList, nil
 }
 
-func (s *Scan) scanFilesForTodos(files []string) error {
+func (s *Scan) scanFilesForTodos(files []string) ([]ScanResult, error) {
 	g := new(errgroup.Group)
 
 	res := make([]ScanResult, 0)
 	logger.Log().WithField("tags", s.config.Tags).Debug("Scanning files for todos")
 	for _, file := range files {
-
 		file := file
 		l := logger.Log().WithField("file", file)
 
@@ -104,28 +102,27 @@ func (s *Scan) scanFilesForTodos(files []string) error {
 	}
 
 	if err := g.Wait(); err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Printf("%+v\n", res)
-
 	logger.Log().Debug("File scan finished")
-	return nil
+	return res, nil
 }
 
-func (s *Scan) Exec() error {
+func (s *Scan) Exec() ([]ScanResult, error) {
 	files, err := s.getListOfFiles()
 	if err != nil {
 		logger.Log().WithError(err).Error("Failed to get list of files")
-		return err
+		return nil, err
 	}
 
 	logger.Log().WithField("files", files).Debug("File list")
 	logger.Log().WithField("file-count", len(files)).Info("Files found")
 
-	if err := s.scanFilesForTodos(files); err != nil {
+	result, err := s.scanFilesForTodos(files)
+	if err != nil {
 		logger.Log().WithError(err).Error("Error scanning files")
-		return err
+		return nil, err
 	}
-	return nil
+	return result, nil
 }
