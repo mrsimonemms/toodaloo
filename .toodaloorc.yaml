@@ -1,5 +1,9 @@
+glob: "**/*"
+ignore_paths:
+  - .git
+  - .git/**/*
 output: toodaloo.yaml
 tags:
-- fixme
-- todo
-- '@todo'
+  - fixme
+  - todo
+  - "@todo"
