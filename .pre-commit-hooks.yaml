@@ -1,0 +1,6 @@
+- id: toodaloo
+  name: toodaloo
+  description: Say goodbye to your todos
+  entry: toodaloo scan
+  language: golang
+  pass_filenames: false
