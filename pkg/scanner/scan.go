@@ -34,7 +34,7 @@ func New(workingDirectory string, cfg *config.Config) (*Scan, error) {
 	}, nil
 }
 
-func scanForTodos(l *logrus.Entry, filename string, tags []string) ([]ScanResult, error) {
+func scanForTodos(l *logrus.Entry, filename string, tags []string, workingDirectory string) ([]ScanResult, error) {
 	l.Debug("Scan starting")
 
 	f, err := os.Open(filename)
@@ -73,8 +73,13 @@ func scanForTodos(l *logrus.Entry, filename string, tags []string) ([]ScanResult
 			author := strings.TrimSpace(matches[3])
 			msg := strings.TrimSpace(matches[5])
 
+			// Remove working directory
+			cleanFilename := strings.TrimPrefix(filename, workingDirectory)
+			// Remove prefixed slash (may or may not be in working directory)
+			cleanFilename = strings.TrimPrefix(cleanFilename, "/")
+
 			res = append(res, ScanResult{
-				File:       filename,
+				File:       cleanFilename,
 				LineNumber: line,
 				Author:     author,
 				Msg:        msg,

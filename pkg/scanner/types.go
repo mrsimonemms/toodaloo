@@ -90,7 +90,7 @@ func (s *Scan) scanFilesForTodos(files []string) ([]ScanResult, error) {
 		l := logger.Log().WithField("file", file)
 
 		g.Go(func() error {
-			r, err := scanForTodos(l, file, s.config.Tags)
+			r, err := scanForTodos(l, file, s.config.Tags, s.workingDirectory)
 			if err != nil {
 				return err
 			}
