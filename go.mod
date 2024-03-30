@@ -3,10 +3,13 @@ module github.com/mrsimonemms/toodaloo
 go 1.22.1
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/mrsimonemms/golang-helpers v0.1.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
+	golang.org/x/sync v0.5.0
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
