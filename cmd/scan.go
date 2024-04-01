@@ -76,13 +76,10 @@ var scanCmd = &cobra.Command{
 		}
 
 		logger.Log().Info("Generating report")
-		data, err := output.Types[scanOpts.Output].Generate(result)
-		if err != nil {
+		if err := output.Generate(scanOpts.Output, scanOpts.SavePath, result); err != nil {
 			logger.Log().WithError(err).Error("Failed to generate report")
 			return err
 		}
-
-		fmt.Println(string(data))
 		return nil
 	},
 }
@@ -100,7 +97,7 @@ func init() {
 	scanCmd.Flags().StringVarP(&scanOpts.Output, "output", "o", viper.GetString("output"), "output type")
 
 	bindEnv("save-path", ".toodaloo.yaml")
-	scanCmd.Flags().StringVarP(&scanOpts.SavePath, "save-path", "s", viper.GetString("save-path"), "save report to path")
+	scanCmd.Flags().StringVarP(&scanOpts.SavePath, "save-path", "s", viper.GetString("save-path"), `save report to path - use "-" to output to stdout`)
 
 	bindEnv("tags", []string{"fixme", "todo", "@todo"})
 	scanCmd.Flags().StringSliceVarP(&scanOpts.Tags, "tags", "t", viper.GetStringSlice("tags"), "todo tags")

@@ -16,15 +16,41 @@
 
 package output
 
-import "github.com/mrsimonemms/toodaloo/pkg/scanner"
+import (
+	"fmt"
+	"os"
+
+	"github.com/mrsimonemms/toodaloo/pkg/scanner"
+)
 
 var Types map[string]Output = make(map[string]Output, 0)
 
 type Output interface {
-	Generate([]scanner.Report) ([]byte, error)
+	generate([]scanner.Report) ([]byte, error)
 }
 
 func init() {
 	// Register the output type
 	Types["yaml"] = YamlOutput{}
+}
+
+func Generate(reportType, savePath string, report []scanner.Report) error {
+	r, ok := Types[reportType]
+	if !ok {
+		return fmt.Errorf("unknown output type: %s", reportType)
+	}
+
+	output, err := r.generate(report)
+	if err != nil {
+		return err
+	}
+
+	if savePath == "-" {
+		// Print to stdout
+		fmt.Println(string(output))
+		return nil
+	}
+
+	// Save to file
+	return os.WriteFile(savePath, output, 0o644)
 }
