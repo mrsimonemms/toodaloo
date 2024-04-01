@@ -41,3 +41,13 @@ repos:
     rev: v1.54.2
     hooks:
       - id: golangci-lint
+  - repo: local
+    hooks:
+      - id: scan
+        name: toodaloo scan
+        entry: toodaloo scan --git-files
+        language: golang
+        args:
+          - -s=toodaloo.md
+          - -o=markdown
+        pass_filenames: false
