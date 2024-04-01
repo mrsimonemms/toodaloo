@@ -31,4 +31,6 @@ FROM alpine
 RUN apk --no-cache add ca-certificates
 WORKDIR /app
 COPY --from=builder /app/app /app
+VOLUME [ "/data" ]
+WORKDIR /data
 ENTRYPOINT [ "/app/app" ]
