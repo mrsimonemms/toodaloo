@@ -33,6 +33,7 @@ repos:
     rev: v1.1.1
     hooks:
       - id: markdown-toc
+        exclude: ^docs
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.9.2
     hooks:
@@ -51,3 +52,4 @@ repos:
           - -s=toodaloo.md
           - -o=markdown
         pass_filenames: false
+        exclude: ^docs
