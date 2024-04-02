@@ -28,6 +28,7 @@ import (
 
 var scanOpts struct {
 	Glob        string
+	GitFiles    bool
 	IgnorePaths []string
 	Output      string
 	SavePath    string
@@ -62,7 +63,11 @@ var scanCmd = &cobra.Command{
 		}
 
 		files := args
-		if len(args) == 0 {
+		if scanOpts.GitFiles {
+			if files, err = s.FindFilesByGit(); err != nil {
+				return err
+			}
+		} else if len(args) == 0 {
 			if files, err = s.FindFilesByGlob(scanOpts.Glob); err != nil {
 				return err
 			}
@@ -89,6 +94,9 @@ func init() {
 
 	bindEnv("glob", "**/*")
 	scanCmd.Flags().StringVar(&scanOpts.Glob, "glob", viper.GetString("glob"), "glob pattern - ignored if files provided as arguments")
+
+	bindEnv("git-files", false)
+	scanCmd.Flags().BoolVar(&scanOpts.GitFiles, "git-files", viper.GetBool("git-files"), "get files from the git tree")
 
 	bindEnv("ignore-paths", []string{".git/**/*"})
 	scanCmd.Flags().StringSliceVar(&scanOpts.IgnorePaths, "ignore-paths", viper.GetStringSlice("ignore-paths"), "ignore scanning these files")

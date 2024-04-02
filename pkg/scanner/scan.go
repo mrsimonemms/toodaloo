@@ -19,12 +19,17 @@ package scanner
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path"
 	"regexp"
 	"strings"
 
 	"github.com/bmatcuk/doublestar/v4"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/filemode"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/mrsimonemms/golang-helpers/logger"
 	"github.com/mrsimonemms/toodaloo/pkg/config"
 	"golang.org/x/sync/errgroup"
@@ -38,6 +43,64 @@ func New(cfg *config.Config) (*Scan, error) {
 
 type Scan struct {
 	config *config.Config
+}
+
+func (s *Scan) FindFilesByGit() ([]string, error) {
+	files := make([]string, 0)
+
+	repo, err := git.PlainOpen(s.config.WorkingDirectory)
+	if err != nil {
+		logger.Log().WithError(err).Error("Failed to open Git repo")
+		return nil, err
+	}
+
+	h, err := repo.ResolveRevision("HEAD")
+	if err != nil {
+		logger.Log().WithError(err).Error("Failed to resolve Git revision")
+		return nil, err
+	}
+
+	commit, err := repo.CommitObject(*h)
+	if err != nil {
+		logger.Log().WithError(err).Error("Failed to get the commit object")
+		return nil, err
+	}
+
+	tree, err := commit.Tree()
+	if err != nil {
+		logger.Log().WithError(err).Error("Failed to get commit tree")
+		return nil, err
+	}
+
+	seen := make(map[plumbing.Hash]bool, 0)
+	iter := object.NewTreeWalker(tree, true, seen)
+
+	defer func() {
+		logger.Log().Debug("Closing tree walker")
+		iter.Close()
+	}()
+
+	// Based on file iterator, but without reading the file blob
+	// to speed things up.
+	// @link https://github.com/go-git/go-git/blob/302dddeda962e4bb3477a8e4080bc6f5a253e2bb/plumbing/object/file.go#L89,L107
+	for {
+		name, entry, err := iter.Next()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			logger.Log().WithError(err).Error("Failed to iterate over files")
+			return nil, err
+		}
+
+		if entry.Mode == filemode.Dir || entry.Mode == filemode.Submodule {
+			continue
+		}
+
+		files = append(files, name)
+	}
+
+	return files, nil
 }
 
 func (s *Scan) FindFilesByGlob(glob string) ([]string, error) {
