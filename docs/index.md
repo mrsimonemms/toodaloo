@@ -1,15 +1,16 @@
 ---
 layout: home
+title: Say goodbye to your todos
 hero:
   name: Toodaloo
   text: Say goodbye to your todos
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Getting started
+      link: /purpose
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Reference
+      link: /commands
 features:
   - title: Feature A
     details: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
