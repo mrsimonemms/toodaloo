@@ -15,7 +15,8 @@
     }
   },
   "postCreateCommand": {
-    "bootstrap": "ln -s $PWD/.cobra.yaml $HOME/.cobra.yaml && if [ ! -f \"go.mod\" ]; then go mod init \"github.com/mrsimonemms/toodaloo\"; fi && if [ ! -f \"main.go\" ]; then cobra-cli init && go mod tidy; fi"
+    "bootstrap": "ln -s $PWD/.cobra.yaml $HOME/.cobra.yaml && if [ ! -f \"go.mod\" ]; then go mod init \"github.com/mrsimonemms/toodaloo\"; fi && if [ ! -f \"main.go\" ]; then cobra-cli init && go mod tidy; fi",
+    "install-toodaloo": "go install ./..."
   },
   "containerEnv": {
     "GIT_REPO": "github.com/mrsimonemms/toodaloo"
