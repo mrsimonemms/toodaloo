@@ -45,6 +45,41 @@ type Scan struct {
 	config *config.Config
 }
 
+func (s *Scan) getAuthorForLine(filename string, lineNumber int, defaultAuthor string) (author, authorEmail string, err error) {
+	repo, err := git.PlainOpen(s.config.WorkingDirectory)
+	if err != nil {
+		if err == git.ErrRepositoryNotExists {
+			// Line not under Git control - return the default author
+			err = nil
+			author = defaultAuthor
+			return
+		}
+		return
+	}
+
+	l, err := repo.Log(&git.LogOptions{
+		FileName: &filename,
+	})
+	if err != nil {
+		return
+	}
+
+	commit, err := l.Next()
+	if err != nil {
+		return
+	}
+
+	blame, err := git.Blame(commit, filename)
+	if err != nil {
+		return
+	}
+
+	author = blame.Lines[lineNumber].AuthorName
+	authorEmail = blame.Lines[lineNumber].Author
+
+	return
+}
+
 func (s *Scan) FindFilesByGit() ([]string, error) {
 	files := make([]string, 0)
 
@@ -186,8 +221,14 @@ func (s *Scan) scanFileForTodo(filename string) ([]Report, error) {
 
 			l1.WithField("matches", matches).Debug("Found matches")
 
-			// @todo(sje): get the author from the Git history
-			author := strings.TrimSpace(matches[4])
+			repoFilename := strings.Replace(filename, s.config.WorkingDirectory, "", 1)
+			repoFilename = strings.TrimLeft(repoFilename, "/")
+
+			author, authorEmail, err := s.getAuthorForLine(repoFilename, lineNumber, strings.TrimSpace(matches[4]))
+			if err != nil {
+				l1.WithError(err).Error("Error getting author")
+				return nil, err
+			}
 			msg := strings.TrimSpace(matches[6])
 
 			// Remove working directory
@@ -196,10 +237,11 @@ func (s *Scan) scanFileForTodo(filename string) ([]Report, error) {
 			cleanFilename = strings.TrimPrefix(cleanFilename, "/")
 
 			res = append(res, Report{
-				File:       cleanFilename,
-				LineNumber: lineNumber,
-				Author:     author,
-				Msg:        msg,
+				File:        cleanFilename,
+				LineNumber:  lineNumber,
+				Author:      author,
+				AuthorEmail: authorEmail,
+				Msg:         msg,
 			})
 		}
 	}

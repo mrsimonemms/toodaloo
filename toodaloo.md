@@ -4,5 +4,4 @@
 
 | File | Line Number | Author | Message |
 | --- | --- | --- | --- |
-| [pkg/output/markdown.go](pkg/output/markdown.go#L30) | 30 | sje | implement report |
-| [pkg/scanner/scan.go](pkg/scanner/scan.go#L189) | 189 | sje | get the author from the Git history |
+| [pkg/output/markdown.go](pkg/output/markdown.go#L30) | 30 | Simon Emms <simon@simonemms.com> | implement report |

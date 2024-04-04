@@ -29,6 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required for Toodaloo hook to work
 
       - name: Set up Go
         uses: actions/setup-go@v4

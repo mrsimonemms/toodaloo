@@ -17,3 +17,6 @@ This makes some changes to the default options passed in to the `scan` command.
    names the file `toodaloo.md`. This can be overridden if desired.
 
 See the [scan command](./commands#scan) for more details on the available flag.
+
+> If using in CI, you will need to clone the whole Git history for the "get author"
+> functionality to work
