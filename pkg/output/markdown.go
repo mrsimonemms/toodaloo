@@ -36,7 +36,7 @@ func (o MarkdownOutput) generate(report []scanner.Report) ([]byte, error) {
 
 	for _, item := range report {
 		res = append(res, []string{
-			item.File,
+			fmt.Sprintf("[%s](%s#L%d)", item.File, item.File, item.LineNumber),
 			strconv.Itoa(item.LineNumber),
 			item.Author,
 			item.Msg,

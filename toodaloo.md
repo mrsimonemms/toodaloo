@@ -4,6 +4,5 @@
 
 | File | Line Number | Author | Message |
 | --- | --- | --- | --- |
-| pkg/output/markdown.go | 30 | sje | implement report |
-| pkg/scanner/scan.go | 189 | sje | get the author from the Git history |
-| pkg/scanner/scan.go | 198 | sje | add the URL to the file/line number |
+| [pkg/output/markdown.go](pkg/output/markdown.go#L30) | 30 | sje | implement report |
+| [pkg/scanner/scan.go](pkg/scanner/scan.go#L189) | 189 | sje | get the author from the Git history |

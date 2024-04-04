@@ -195,7 +195,6 @@ func (s *Scan) scanFileForTodo(filename string) ([]Report, error) {
 			// Remove prefixed slash (may or may not be in working directory)
 			cleanFilename = strings.TrimPrefix(cleanFilename, "/")
 
-			// @todo(sje): add the URL to the file/line number
 			res = append(res, Report{
 				File:       cleanFilename,
 				LineNumber: lineNumber,
