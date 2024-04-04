@@ -19,6 +19,7 @@ package output
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/mrsimonemms/toodaloo/pkg/scanner"
 )
@@ -39,6 +40,17 @@ func Generate(reportType, savePath string, report []scanner.Report) error {
 	if !ok {
 		return fmt.Errorf("unknown output type: %s", reportType)
 	}
+
+	sort.SliceStable(report, func(i, j int) bool {
+		reportI := report[i]
+		reportJ := report[j]
+
+		if reportI.File == reportJ.File {
+			return reportI.LineNumber < reportJ.LineNumber
+		}
+
+		return reportI.File < reportJ.File
+	})
 
 	output, err := r.generate(report)
 	if err != nil {
