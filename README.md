@@ -85,6 +85,9 @@ repos:
 This will generate a [Markdown](https://www.markdownguide.org) formatted file
 at `toodaloo.md`. It also only scans files in the git tree.
 
+> If using in CI, you will need to clone the whole Git history for the "get author"
+> functionality to work
+
 ## Contributing
 
 ### Open in a container

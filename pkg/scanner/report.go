@@ -17,8 +17,9 @@
 package scanner
 
 type Report struct {
-	File       string `json:"file"`
-	LineNumber int    `json:"lineNumber"`
-	Author     string `json:"author,omitempty"`
-	Msg        string `json:"message,omitempty"`
+	File        string `json:"file"`
+	LineNumber  int    `json:"lineNumber"`
+	Author      string `json:"author,omitempty"`
+	AuthorEmail string `json:"authorEmail,omitempty"`
+	Msg         string `json:"message,omitempty"`
 }
