@@ -27,20 +27,23 @@ import (
 type MarkdownOutput struct{}
 
 // Convert to a markdown table
-// @todo(sje): implement report
 func (o MarkdownOutput) generate(report []scanner.Report) ([]byte, error) {
-	res := [][]string{
-		{"File", "Line Number", "Author", "Message"},
-		{"---", "---", "---", "---"},
-	}
+	var res [][]string
 
-	for _, item := range report {
-		res = append(res, []string{
-			fmt.Sprintf("[%s](%s#L%d)", item.File, item.File, item.LineNumber),
-			strconv.Itoa(item.LineNumber),
-			fmt.Sprintf("%s <%s>", item.Author, item.AuthorEmail),
-			item.Msg,
-		})
+	if len(report) > 0 {
+		res = [][]string{
+			{"File", "Line Number", "Author", "Message"},
+			{"---", "---", "---", "---"},
+		}
+
+		for _, item := range report {
+			res = append(res, []string{
+				fmt.Sprintf("[%s](%s#L%d)", item.File, item.File, item.LineNumber),
+				strconv.Itoa(item.LineNumber),
+				fmt.Sprintf("%s <%s>", item.Author, item.AuthorEmail),
+				item.Msg,
+			})
+		}
 	}
 
 	output := strings.Join([]string{
@@ -54,6 +57,10 @@ func (o MarkdownOutput) generate(report []scanner.Report) ([]byte, error) {
 		line = append([]string{""}, line...)
 		line = append(line, "")
 		output += fmt.Sprintf("%s\n", strings.TrimSpace(strings.Join(line, " | ")))
+	}
+
+	if len(report) == 0 {
+		output += "🎉🎉🎉 Woohoo! Nothing to do 🎉🎉🎉\n"
 	}
 
 	return []byte(output), nil
