@@ -66,7 +66,7 @@ Flags:
   -t, --tags strings           todo tags (default [fixme,todo,@todo])
 
 Global Flags:
-  -d, --directory string   working directory (default "/workspaces/toodaloo2")
+  -d, --directory string   working directory (default "/workspaces/toodaloo")
   -l, --log-level string   log level: trace, debug, info, warning, error, fatal, panic (default "info")
 ```
 
